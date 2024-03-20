@@ -21,6 +21,7 @@ import {
   deleteStudent,
   updateStudent,
 } from "../app/slice/studentSlice";
+import { NavLink } from "react-router-dom";
 
 const heads = [
   {
@@ -75,10 +76,7 @@ const Student = () => {
   const onchangeHandle = (e) => {
     setStudent({ ...student, [e.target.name]: e.target.value });
   };
-  //   const handleClickOpen = (item) => {
-  //     setOpen(true);
-  //     setStudent(item);
-  //   };
+
   const handleClose = () => {
     setOpen(false);
     setStudent({});
@@ -121,13 +119,38 @@ const Student = () => {
   return (
     <div>
       <div className="">
+        <h1 class="text-3xl font-bold  p-4 bg-green-50 text-center">
+          <span className="text-red-700">
+            Crud Operation useing Redux-toolkit and React js
+          </span>
+        </h1>
         <h1 class="text-3xl font-bold  p-4 bg-red-50 text-center">
           Student Details
         </h1>
-        <div className="flex justify-end p-10">
+        <div className="flex justify-between mx-5 p-4">
+          <Button
+            variant="outlined"
+            className="captilize m-2 p-4"
+            sx={{ textTransform: "capitalize" }}
+          >
+            <NavLink to="/db" className="">
+              IndexedDb With React js
+            </NavLink>
+          </Button>
+          <Button
+            variant="outlined"
+            className="captilize m-2 p-4"
+            sx={{ textTransform: "capitalize" }}
+          >
+            <NavLink to="/simple" className="">
+              simple
+            </NavLink>
+          </Button>
           <Button
             variant="contained"
             className="captilize"
+            size="small"
+            sx={{ textTransform: "capitalize" }}
             onClick={() => setOpen(true)}
           >
             Add Student

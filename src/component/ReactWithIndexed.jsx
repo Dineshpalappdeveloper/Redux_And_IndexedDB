@@ -14,7 +14,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import CloseIcon from "@mui/icons-material/Close";
-import { STUDENT_DATA } from "../app/data/data";
+import { NavLink } from "react-router-dom";
 
 const heads = [
   {
@@ -34,10 +34,10 @@ const heads = [
     label: "Location",
   },
 
-  // {
-  //   key: 5,
-  //   label: "Action",
-  // },
+  {
+    key: 5,
+    label: "Action",
+  },
 ];
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -68,28 +68,19 @@ const connectIndexedDb = () => {
     request.onupgradeneeded = (event) => {
       const db = request.result;
       if (!db.objectStoreNames.contains("studentData")) {
-        const objectStore = db.createObjectStore("studentData", {
+        db.createObjectStore("studentData", {
           keyPath: "id",
         });
-
-        // objectStore.createIndex("name", "name", {
-        //   unique: false,
-        // });
       }
     };
     request.onsuccess = () => {
       console.log("Database opened successfully");
-
-      const db = request.result;
-
-      // var tx = db.transaction("studentData", "readwrite");
-
-      // return tx.complete;
     };
   }
 };
 const ReactWithIndexed = () => {
   const [open, setOpen] = useState(false);
+  const [editStudent, setEditStudent] = useState(false);
   const [allstudent, setAllStudent] = useState([]);
   const [student, setStudent] = useState({
     name: null,
@@ -108,27 +99,22 @@ const ReactWithIndexed = () => {
   const onchangeHandle = (e) => {
     setStudent({ ...student, [e.target.name]: e.target.value });
   };
-  //   const handleClickOpen = (item) => {
-  //     setOpen(true);
-  //     setStudent(item);
-  //   };
+
   const handleClose = () => {
     setOpen(false);
+    setEditStudent(false);
     setStudent({});
   };
-  const handleCloseeditDialog = () => {
-    // setEditDialog(false);
-    setStudent({});
-  };
+
   const handleOpenEditDialog = (item) => {
     setStudent(item);
     setOpen(true);
-    // setEditDialog(true);
+    setEditStudent(true);
   };
   // for finfing greatest id
   function findGreatestId(array) {
     if (array.length === 0) {
-      return null; // Return null if the array is empty
+      return null;
     }
 
     let greatestId = array[0].id;
@@ -163,6 +149,8 @@ const ReactWithIndexed = () => {
         tx.oncomplete = () => {
           db.close();
         };
+        getAllStudent();
+        handleClose();
         alert("student Added");
       };
       studentInformation.onerror = (event) => {
@@ -185,14 +173,58 @@ const ReactWithIndexed = () => {
 
     // console.log(idExists, "studentid");
   };
-  const onSubmitData = (e) => {
+  const handleEditSudent = (e) => {
     e.preventDefault();
-    // dispatch(updateStudent(student));
-    // setEditDialog(false);
+    console.log("edit", student);
+
+    const dbPromise = indexedDB.open("students", 1);
+    dbPromise.onsuccess = () => {
+      const db = dbPromise.result;
+      const tx = db.transaction("studentData", "readwrite");
+      const studentData = tx.objectStore("studentData");
+      const studentInformation = studentData.put({
+        id: student.id,
+        name: student?.name,
+        rollnumber: student?.rollnumber,
+        location: student?.location,
+        batch: student?.batch,
+      });
+
+      studentInformation.onsuccess = () => {
+        tx.oncomplete = () => {
+          db.close();
+        };
+        getAllStudent();
+        handleClose();
+        alert("student Updated");
+      };
+      studentInformation.onerror = (event) => {
+        console.log(event);
+        alert("error geting when updateing student");
+      };
+    };
   };
   const deleteStudentById = (id) => {
     console.log(id, "delete");
-    // dispatch(deleteStudent(id));
+    const dbPromise = indexedDB.open("students", 1);
+    dbPromise.onsuccess = () => {
+      const db = dbPromise.result;
+      const tx = db.transaction("studentData", "readwrite");
+      const studentData = tx.objectStore("studentData");
+      const deleteStudent = studentData.delete(id);
+
+      deleteStudent.onsuccess = (query) => {
+        alert("user deleted");
+        getAllStudent();
+      };
+      tx.oncomplete = () => {
+        db.close();
+      };
+      deleteStudent.onerror = (event) => {
+        console.log(event);
+        alert("error geting when deleting student  data");
+      };
+    };
   };
   const getAllStudent = () => {
     const dbPromise = indexedDB.open("students", 1);
@@ -226,10 +258,29 @@ const ReactWithIndexed = () => {
           <h1 class="text-3xl font-bold  p-4 bg-red-50 text-center">
             Student Details
           </h1>
-          <div className="flex justify-end p-10">
+          <div className="flex justify-between mx-5 p-4">
+            <Button
+              variant="outlined"
+              className="captilize m-2 p-4"
+              sx={{ textTransform: "capitalize" }}
+            >
+              <NavLink to="/" className="">
+                crud useing React js With Redux
+              </NavLink>
+            </Button>
+            <Button
+              variant="outlined"
+              className="captilize m-2 p-4"
+              sx={{ textTransform: "capitalize" }}
+            >
+              <NavLink to="/simple" className="">
+                simple
+              </NavLink>
+            </Button>
             <Button
               variant="contained"
               className="captilize"
+              sx={{ textTransform: "capitalize" }}
               onClick={() => setOpen(true)}
             >
               Add Student
@@ -276,13 +327,13 @@ const ReactWithIndexed = () => {
                           <TableCell>{item.batch}</TableCell>
 
                           <TableCell>{item.location}</TableCell>
-                          {/* <TableCell>
+                          <TableCell>
                             {" "}
                             <IconButton
                               aria-label="delete"
                               size="large"
                               type="button"
-                              onClick={() => deleteStudentById(item.enid)}
+                              onClick={() => deleteStudentById(item.id)}
                             >
                               <DeleteIcon fontSize="inherit" />
                             </IconButton>
@@ -293,7 +344,7 @@ const ReactWithIndexed = () => {
                             >
                               Edit
                             </Button>
-                          </TableCell> */}
+                          </TableCell>
                         </TableRow>
                       );
                     })}
@@ -329,7 +380,7 @@ const ReactWithIndexed = () => {
             <CloseIcon />
           </IconButton>
           <DialogContent dividers>
-            <form onSubmit={handleaAddStudent}>
+            <form onSubmit={editStudent ? handleEditSudent : handleaAddStudent}>
               <TextField
                 id="outlined-basic"
                 required

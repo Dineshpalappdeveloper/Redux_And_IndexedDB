@@ -75,14 +75,21 @@ const connectIndexedDb = () => {
         );
       };
     }
-    getAllStudents();
+    if (false) {
+      getAllStudents();
+    }
   }
 };
 const Simple = () => {
   useEffect(() => {
     connectIndexedDb();
   });
-  return <div>Simple</div>;
+  return (
+    <div>
+      Simple
+      <h1>Inspect Window then view database </h1>
+    </div>
+  );
 };
 
 export default Simple;
