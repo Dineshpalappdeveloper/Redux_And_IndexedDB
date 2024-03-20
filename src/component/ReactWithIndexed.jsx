@@ -15,6 +15,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import CloseIcon from "@mui/icons-material/Close";
 import { NavLink } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const heads = [
   {
@@ -111,21 +112,18 @@ const ReactWithIndexed = () => {
     setOpen(true);
     setEditStudent(true);
   };
-  // for finfing greatest id
+  // for finding greatest id
   function findGreatestId(array) {
     if (array.length === 0) {
       return null;
     }
 
     let greatestId = array[0].id;
-
     for (let i = 1; i < array.length; i++) {
       if (array[i].id > greatestId) {
         greatestId = array[i].id;
       }
     }
-
-    // Return the greatest id
     return greatestId;
   }
 
@@ -151,27 +149,14 @@ const ReactWithIndexed = () => {
         };
         getAllStudent();
         handleClose();
-        alert("student Added");
+
+        toast.success("student Added");
       };
       studentInformation.onerror = (event) => {
         console.log(event);
-        alert("error geting when adding student");
+        toast.error("error geting when adding student");
       };
     };
-
-    // check uniqe id
-    // const idExists = students.some(
-    //   (studentid) => studentid.enid === student.enid
-    // );
-    // if (idExists) {
-    //   alert("Enenvironment id Aready Edits");
-    // } else {
-    //   // dispatch(addStudent(student));
-    //   setOpen(false);
-    //   setStudent({});
-    // }
-
-    // console.log(idExists, "studentid");
   };
   const handleEditSudent = (e) => {
     e.preventDefault();
@@ -196,11 +181,11 @@ const ReactWithIndexed = () => {
         };
         getAllStudent();
         handleClose();
-        alert("student Updated");
+        toast.success("student Updated");
       };
       studentInformation.onerror = (event) => {
         console.log(event);
-        alert("error geting when updateing student");
+        toast.error("error geting when updateing student");
       };
     };
   };
@@ -214,7 +199,7 @@ const ReactWithIndexed = () => {
       const deleteStudent = studentData.delete(id);
 
       deleteStudent.onsuccess = (query) => {
-        alert("user deleted");
+        toast.success("user deleted");
         getAllStudent();
       };
       tx.oncomplete = () => {
@@ -222,7 +207,7 @@ const ReactWithIndexed = () => {
       };
       deleteStudent.onerror = (event) => {
         console.log(event);
-        alert("error geting when deleting student  data");
+        toast.error("error geting when deleting student  data");
       };
     };
   };
@@ -242,7 +227,7 @@ const ReactWithIndexed = () => {
       };
       studentInformation.onerror = (event) => {
         console.log(event);
-        alert("error geting when loading student initial data");
+        toast.error("error geting when loading student initial data");
       };
     };
   };

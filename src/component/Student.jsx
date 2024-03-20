@@ -22,6 +22,7 @@ import {
   updateStudent,
 } from "../app/slice/studentSlice";
 import { NavLink } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const heads = [
   {
@@ -90,18 +91,20 @@ const Student = () => {
     setEditDialog(true);
   };
 
-  const handleaAddStudent = (e) => {
+  const handleAddStudent = (e) => {
     e.preventDefault();
+
     // check uniqe id
     const idExists = students.some(
       (studentid) => studentid.enid === student.enid
     );
     if (idExists) {
-      alert("Enenvironment id Aready Edits");
+      toast.error("Enenvironment id Aready Edits");
     } else {
       dispatch(addStudent(student));
       setOpen(false);
       setStudent({});
+      toast.success("Student Added");
     }
 
     console.log(idExists, "studentid");
@@ -110,10 +113,12 @@ const Student = () => {
     e.preventDefault();
     dispatch(updateStudent(student));
     setEditDialog(false);
+    toast.success("Data Updated");
   };
   const deleteStudentById = (id) => {
     console.log(id, "delete");
     dispatch(deleteStudent(id));
+    toast.success("Student Deleted");
   };
 
   return (
@@ -250,7 +255,7 @@ const Student = () => {
             <CloseIcon />
           </IconButton>
           <DialogContent dividers>
-            <form onSubmit={handleaAddStudent}>
+            <form onSubmit={handleAddStudent}>
               <TextField
                 id="outlined-basic"
                 required
