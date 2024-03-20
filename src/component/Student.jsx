@@ -21,10 +21,7 @@ import {
   deleteStudent,
   updateStudent,
 } from "../app/slice/studentSlice";
-// import { getuser, getusers } from "../../app/redux/feature/user/UserSlice";
-// import { addusers } from "../../app/redux/feature/user/AddUserSlice";
-// import { updateUsers } from "../../app/redux/feature/user/updateUserSlice";
-// import { deleteUsers } from "../../app/redux/feature/user/deleteUserSlice";
+
 const heads = [
   {
     key: 0,

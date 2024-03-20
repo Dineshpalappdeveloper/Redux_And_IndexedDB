@@ -1,10 +1,10 @@
 import "./App.css";
-import Student from "./component/Student";
+import GlobalRouters from "./routers/GlobalRouters";
 
 function App() {
   return (
     <div className="App">
-      <Student />
+      <GlobalRouters />
     </div>
   );
 }
