@@ -71,6 +71,7 @@ const connectIndexedDb = () => {
       if (!db.objectStoreNames.contains("studentData")) {
         db.createObjectStore("studentData", {
           keyPath: "id",
+          autoIncrement: true,
         });
       }
     };
@@ -112,31 +113,16 @@ const ReactWithIndexed = () => {
     setOpen(true);
     setEditStudent(true);
   };
-  // for finding greatest id
-  function findGreatestId(array) {
-    if (array.length === 0) {
-      return null;
-    }
-
-    let greatestId = array[0].id;
-    for (let i = 1; i < array.length; i++) {
-      if (array[i].id > greatestId) {
-        greatestId = array[i].id;
-      }
-    }
-    return greatestId;
-  }
 
   const handleaAddStudent = (e) => {
     e.preventDefault();
-    let newid = findGreatestId(allstudent) + 1;
+
     const dbPromise = indexedDB.open("students", 1);
     dbPromise.onsuccess = () => {
       const db = dbPromise.result;
       const tx = db.transaction("studentData", "readwrite");
       const studentData = tx.objectStore("studentData");
       const studentInformation = studentData.put({
-        id: newid,
         name: student?.name,
         rollnumber: student?.rollnumber,
         location: student?.location,
@@ -199,7 +185,7 @@ const ReactWithIndexed = () => {
       const deleteStudent = studentData.delete(id);
 
       deleteStudent.onsuccess = (query) => {
-        toast.success("user deleted");
+        toast.success("Student Deleted");
         getAllStudent();
       };
       tx.oncomplete = () => {
